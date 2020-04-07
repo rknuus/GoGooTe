@@ -13,15 +13,18 @@ set (PROJECT_VERSION ${GOGOOTE_VERSION})
 set (PROJECT_DESCRIPTION "CppUnit to GoogleTest converter")
 set (PROJECT_HOMEPAGE_URL "https://github.com/rknuus/GoGooTe")
 
-if (NOT PATH_TO_LLVM)
-  message(FATAL_ERROR "
+set (USAGE "
  cmake is supposed to be called with PATH_TO_LLVM pointing to
  a precompiled version of LLVM or to to the source code of LLVM
+ and PATH_TO_LIT to the lit executable.
 
  Examples:
- cmake -G \"${CMAKE_GENERATOR}\" -DPATH_TO_LLVM=/opt/llvm-10.0.0 ${CMAKE_SOURCE_DIR}
- cmake -G \"${CMAKE_GENERATOR}\" -DPATH_TO_LLVM=/opt/llvm/source ${CMAKE_SOURCE_DIR}
+ cmake -G \"${CMAKE_GENERATOR}\" -DPATH_TO_LLVM=/opt/llvm-10.0.0 -DPATH_TO_LIT=~/llvm/utils/llvm-lit ${CMAKE_SOURCE_DIR}
+ cmake -G \"${CMAKE_GENERATOR}\" -DPATH_TO_LLVM=/opt/llvm/source  -DPATH_TO_LIT=/opt/llvm/utils/llvm-lit ${CMAKE_SOURCE_DIR}
 ")
+
+if (NOT PATH_TO_LLVM OR NOT PATH_TO_LIT)
+  message(FATAL_ERROR ${USAGE})
 endif()
 
 if (NOT IS_ABSOLUTE ${PATH_TO_LLVM})
@@ -30,10 +33,18 @@ if (NOT IS_ABSOLUTE ${PATH_TO_LLVM})
     "${PATH_TO_LLVM}" REALPATH BASE_DIR "${CMAKE_BINARY_DIR}")
 endif()
 
+if (NOT IS_ABSOLUTE ${PATH_TO_LIT})
+  # Convert relative path to absolute path
+  get_filename_component(PATH_TO_LIT
+    "${PATH_TO_LIT}" REALPATH BASE_DIR "${CMAKE_BINARY_DIR}")
+endif()
+
 set (BUILD_AGAINST_PRECOMPILED_LLVM TRUE)
 if (EXISTS ${PATH_TO_LLVM}/CMakeLists.txt)
   set (BUILD_AGAINST_PRECOMPILED_LLVM FALSE)
 endif()
+
+set(CMAKE_CXX_STANDARD 14)  # TODO(KNR): double-check compatibility with LLVM
 
 # This enables assertions for Release builds.
 # https://stackoverflow.com/questions/22140520/how-to-enable-assert-in-cmake-release-mode
@@ -171,3 +182,8 @@ include(${CMAKE_CURRENT_LIST_DIR}/cmake/version.cmake)
 
 # add_subdirectory(LLVMCompatibility/${LLVM_COMPATIBILITY_DIR})
 add_subdirectory(src)
+
+include(CTest)
+enable_testing()
+add_subdirectory(test)
+add_subdirectory(test-lit)
