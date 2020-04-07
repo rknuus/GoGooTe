@@ -15,5 +15,9 @@ endif()
 add_gogoote_executable(
   NAME gogoote
   SOURCES ${SOURCES}
-  LINK_WITH ${GOGOOTE_CXX_LLVM_LIBRARIES}
+  LINK_WITH
+    clangTooling
+    clangBasic
+    clangASTMatchers
+    ${GOGOOTE_CXX_LLVM_LIBRARIES}
 )
