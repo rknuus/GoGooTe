@@ -3,7 +3,7 @@ set(LIT_EXEC ${PATH_TO_LIT})
 # TODO(KNR): currently only supporting UNIX-like systems, because don't have access to
 # Windows system
 set(FILE_EXISTS_EXEC ${CMAKE_CURRENT_SOURCE_DIR}/test-file-exists-unix.sh)
-set(FILECHECK_EXEC filecheck)  # TODO(KNR): path?
+set(FILECHECK_EXEC ${PATH_TO_LLVM}/bin/FileCheck)
 
 # HACK(KNR): Copy entire test-lit directory from source to build directory, because we
 # don't want to maintain a list of lit tests in CMake, GoGooTe creates files in-situ,

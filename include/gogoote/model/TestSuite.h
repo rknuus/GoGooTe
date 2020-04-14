@@ -1,7 +1,8 @@
 #pragma once
 
-#include <string>
 #include <ostream>
+#include <string>
+#include <vector>
 #include "gogoote/model/ModelItem.h"
 
 
@@ -25,8 +26,14 @@ public:
   explicit TestSuite(const std::string& name);
   // TODO(KNR): rule of six
 
+  void add_test_case(const std::string& test_case_name);
+
+  // TODO(KNR): borked
+  bool is_called(const std::string& name) const;
+
 private:
   std::string name_;
+  std::vector<std::string> test_cases_;
 
   friend std::ostream& operator<<(std::ostream& os, const TestSuite& value);
 };
