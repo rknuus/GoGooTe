@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "gogoote/model/ModelItem.h"
+#include "gogoote/model/TestCase.h"
 
 
 namespace gogoote {
@@ -20,20 +21,23 @@ namespace model {
 // TestCase    | TestCase    | Test (TEST)
 //
 // [1]: https://github.com/google/googletest/blob/master/googletest/docs/primer.md#beware-of-the-nomenclature
-class TestSuite : public ModelItem
-{
+class TestSuite : public ModelItem {
 public:
   explicit TestSuite(const std::string& name);
   // TODO(KNR): rule of six
 
-  void add_test_case(const std::string& test_case_name);
+  void add_test_case(const TestCase& test_case);
 
   // TODO(KNR): borked
   bool is_called(const std::string& name) const;
 
+  std::string get_name() const;
+  TestCase *const get_test_case();
+
 private:
   std::string name_;
-  std::vector<std::string> test_cases_;
+  // std::vector<TestCase> test_cases_;
+  TestCase test_case_{"PLACEHOLDER"};
 
   friend std::ostream& operator<<(std::ostream& os, const TestSuite& value);
 };

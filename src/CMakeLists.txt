@@ -1,5 +1,7 @@
 set (SOURCES
   cppunit/TestCaseFinder.cpp
+  model/Assertion.cpp
+  model/TestCase.cpp
   model/TestSuite.cpp
   File.cpp
   Files.cpp

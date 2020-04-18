@@ -5,6 +5,11 @@
 
 
 namespace gogoote {
+
+namespace model {
+class TestSuite;
+}  // namespace model
+
 namespace cppunit {
 
 class TestCaseFinder : public clang::ast_matchers::MatchFinder::MatchCallback
@@ -15,6 +20,7 @@ public :
 
 private:
   Files* files_{nullptr};
+  model::TestSuite* current_test_suite_{nullptr};
 };
 
 }  // namespace cppunit
