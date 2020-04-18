@@ -3,6 +3,7 @@
 ; RUN: %GOGOOTE_EXEC %s --
 ; RUN: %FILECHECK_EXEC %s --input-file=%s.gtest.cpp
 ; CHECK:TEST(ComplexNumberTest, runTest) {
+; CHECK:}
 **/
 
 // as alternative to FileCheck:
