@@ -39,10 +39,7 @@ void TestCaseFinder::sign_up(clang::ast_matchers::MatchFinder& finder, Files* fi
   const auto test_method = cxxMethodDecl(ofClass(test_case)).bind("TestMethod");
   finder.addMatcher(test_method, this);
 
-  // let failIfMethod cxxMethodDecl(ofClass(cxxRecordDecl(hasName("Asserter"))), hasName("failIf"))
-  // callExpr(callee(failIfMethod), hasArgument(0, unaryOperator().bind("Condition"))).bind("Assertion")
   const auto assertion_method = cxxMethodDecl(ofClass(cxxRecordDecl(hasName("Asserter"))), hasName("failIf"));
-  // const auto assertion_call = callExpr(callee(assertion_method), hasArgument(0, unaryOperator().bind("Condition"))).bind("Assertion");
   const auto assertion_call = callExpr(callee(assertion_method), hasArgument(0, unaryOperator().bind("Condition")));
   finder.addMatcher(assertion_call, this);
 }
@@ -89,11 +86,7 @@ std::string get_condition_code(const UnaryOperator* condition_op_node, SourceMan
 void TestCaseFinder::run(const MatchFinder::MatchResult &Result) {
   const CXXRecordDecl *test_case_node = Result.Nodes.getNodeAs<CXXRecordDecl>("TestCase");
   const CXXMethodDecl *test_method_node = Result.Nodes.getNodeAs<CXXMethodDecl>("TestMethod");
-  // const CallExpr *assertion_call_node = Result.Nodes.getNodeAs<CallExpr>("Assertion");
   const UnaryOperator *condition_op_node = Result.Nodes.getNodeAs<UnaryOperator>("Condition");
-
-  // model::TestSuite* current_test_suite_{nullptr};
-  // model::TestCase* current_test_case_{nullptr};
 
   if (test_case_node && !test_method_node) {
     // TODO(KNR): this is borked, look up builder pattern in loud-mouth's book
@@ -102,11 +95,9 @@ void TestCaseFinder::run(const MatchFinder::MatchResult &Result) {
     }
     files_->add(get_source_file(Result) + ".gtest.cpp", model::TestSuite{test_case_node->getName()});
     current_test_suite_ = files_->get(test_case_node->getName());
-  // } else if (test_method_node && !assertion_call_node) {
   } else if (test_method_node && !condition_op_node) {
     assert(current_test_suite_ != nullptr);
     current_test_suite_->add_test_case(model::TestCase{test_method_node->getName()});
-  // } else if (assertion_call_node) {
   } else if (condition_op_node) {
     assert(current_test_suite_ != nullptr);
     current_test_suite_->get_test_case()->add_assertion(model::Assertion{get_condition_code(condition_op_node, *Result.SourceManager)});
