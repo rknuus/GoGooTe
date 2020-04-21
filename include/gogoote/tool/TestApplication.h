@@ -8,7 +8,7 @@
 namespace gogoote {
 namespace tool {
 
-class Files {
+class TestApplication {
 public:
   void add(const std::string& filename, const model::TestSuite& item);
   model::TestSuite * const get(const std::string& filename);

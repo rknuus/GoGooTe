@@ -6,7 +6,7 @@
 #include <clang/Frontend/FrontendAction.h>
 #include <llvm/ADT/StringRef.h>
 #include "gogoote/cppunit/TestCaseFinder.h"
-#include "gogoote/tool/Files.h"
+#include "gogoote/tool/TestApplication.h"
 
 
 namespace gogoote {
@@ -19,7 +19,7 @@ public:
   void ExecuteAction() override;
 
 private:
-  Files files_;
+  TestApplication files_;
   clang::ast_matchers::MatchFinder finder_;
   cppunit::TestCaseFinder test_case_finder_;
 };

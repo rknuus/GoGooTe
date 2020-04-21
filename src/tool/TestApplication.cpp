@@ -1,4 +1,4 @@
-#include "gogoote/tool/Files.h"
+#include "gogoote/tool/TestApplication.h"
 #include <algorithm>
 #include <string>
 #include <utility>
@@ -7,11 +7,11 @@
 namespace gogoote {
 namespace tool {
 
-void Files::add(const std::string& filename, const model::TestSuite& item) {
+void TestApplication::add(const std::string& filename, const model::TestSuite& item) {
   items_.push_back(std::make_pair(filename, item));
 }
 
-model::TestSuite * const Files::get(const std::string& name) {
+model::TestSuite * const TestApplication::get(const std::string& name) {
   const auto match_name = [name](const std::pair<std::string, model::TestSuite>& item) {
     return item.second.is_called(name);
   };
@@ -22,7 +22,7 @@ model::TestSuite * const Files::get(const std::string& name) {
   return &item->second;
 }
 
-void Files::generate() const {
+void TestApplication::generate() const {
   const auto gen = [](const std::pair<std::string, model::TestSuite>& p) {
     FileWriter f{p.first}; f.append(model::to_string(p.second));
   };

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <clang/ASTMatchers/ASTMatchFinder.h>
-#include "gogoote/tool/Files.h"
+#include "gogoote/tool/TestApplication.h"
 
 
 namespace gogoote {
@@ -16,11 +16,11 @@ class TestCaseFinder : public clang::ast_matchers::MatchFinder::MatchCallback
 {
 public:
   // TODO(KNR): cppunit should not access tool namespace, factor out an interface
-  void addMatchers(clang::ast_matchers::MatchFinder& finder, tool::Files* files);  // TODO(KNR): factor out interface
+  void addMatchers(clang::ast_matchers::MatchFinder& finder, tool::TestApplication* files);  // TODO(KNR): factor out interface
   void run(const clang::ast_matchers::MatchFinder::MatchResult &Result) override;
 
 private:
-  tool::Files* files_{nullptr};
+  tool::TestApplication* files_{nullptr};
   model::TestSuite* current_test_suite_{nullptr};
 };
 

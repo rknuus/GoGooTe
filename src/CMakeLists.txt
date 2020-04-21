@@ -4,7 +4,7 @@ set (SOURCES
   model/TestCase.cpp
   model/TestSuite.cpp
   tool/FileWriter.cpp
-  tool/Files.cpp
+  tool/TestApplication.cpp
   tool/Tool.cpp
 )
 
