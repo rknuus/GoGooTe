@@ -100,7 +100,7 @@ void TestCaseFinder::run(const MatchFinder::MatchResult &Result) {
     current_test_suite_->add_test_case(model::TestCase{test_method_node->getName()});
   } else if (condition_op_node) {
     assert(current_test_suite_ != nullptr);
-    current_test_suite_->get_test_case()->add_assertion(model::Assertion{get_condition_code(condition_op_node, *Result.SourceManager)});
+    current_test_suite_->get_test_case()->addAssertion(model::Assertion{get_condition_code(condition_op_node, *Result.SourceManager)});
   }
 }
 

@@ -14,7 +14,7 @@ public:
   explicit TestCase(const std::string& name);
   // TODO(KNR): rule of six
 
-  void add_assertion(const Assertion& assertion);
+  void addAssertion(const Assertion& assertion);
 
 private:
   std::string name_;

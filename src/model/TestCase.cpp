@@ -7,7 +7,7 @@ namespace model {
 
 TestCase::TestCase(const std::string& name) : name_(name) {}
 
-void TestCase::add_assertion(const Assertion& assertion) {
+void TestCase::addAssertion(const Assertion& assertion) {
   assertions_.push_back(assertion);
 }
 

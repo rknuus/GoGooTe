@@ -26,7 +26,7 @@ TEST(TestSuite, CppUnitTestCase_GenerateGTestTest) {
 TEST(TestSuite, CppUnitBasicAssertion_GenerateGTestAssertion) {
   const gogoote::model::Assertion assertion{"true"};
   gogoote::model::TestCase test_case{"runTest"};
-  test_case.add_assertion(assertion);
+  test_case.addAssertion(assertion);
   gogoote::model::TestSuite suite{"Foo"};
   suite.add_test_case(test_case);
 
