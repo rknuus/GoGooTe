@@ -16,7 +16,7 @@ std::string TestSuite::getName() const {
   return name_;
 }
 
-TestCase *const TestSuite::get_test_case() {
+TestCase *const TestSuite::getTestCase() {
   return &test_case_;
 }
 
