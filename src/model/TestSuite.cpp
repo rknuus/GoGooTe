@@ -12,10 +12,6 @@ void TestSuite::addTestCase(const TestCase& test_case) {
   test_case_ = test_case;
 }
 
-bool TestSuite::is_called(const std::string& name) const {
-  return name_ == name;
-}
-
 std::string TestSuite::get_name() const {
   return name_;
 }

@@ -27,9 +27,6 @@ public:
 
   void addTestCase(const TestCase& test_case);
 
-  // TODO(KNR): borked
-  bool is_called(const std::string& name) const;
-
   std::string get_name() const;
   TestCase *const get_test_case();
 
