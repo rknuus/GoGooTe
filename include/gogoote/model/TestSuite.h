@@ -3,7 +3,6 @@
 #include <ostream>
 #include <string>
 #include <vector>
-#include "gogoote/model/ModelItem.h"
 #include "gogoote/model/TestCase.h"
 
 
@@ -21,7 +20,7 @@ namespace model {
 // TestCase    | TestCase    | Test (TEST)
 //
 // [1]: https://github.com/google/googletest/blob/master/googletest/docs/primer.md#beware-of-the-nomenclature
-class TestSuite : public ModelItem {
+class TestSuite {
 public:
   explicit TestSuite(const std::string& name);
   // TODO(KNR): rule of six
