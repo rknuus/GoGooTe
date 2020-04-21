@@ -17,7 +17,7 @@ using namespace clang::ast_matchers;
 namespace gogoote {
 namespace cppunit {
 
-std::string get_source_file(const MatchFinder::MatchResult &Result) {
+std::string GetSourceFileName(const MatchFinder::MatchResult &Result) {
   auto sm{Result.SourceManager};
   assert(sm != nullptr);
   auto file_id = sm->getMainFileID();
@@ -72,7 +72,7 @@ clang::CharSourceRange expandRange(const clang::SourceRange &range, const clang:
   return clang::CharSourceRange::getCharRange(begin, end);
 }
 
-std::string get_condition_code(const UnaryOperator* condition_op_node, SourceManager &sm) {
+std::string extractConditionCode(const UnaryOperator* condition_op_node, SourceManager &sm) {
   assert(condition_op_node != nullptr);
 
   const auto range = expandRange(condition_op_node->getSourceRange(), sm);
@@ -93,14 +93,14 @@ void TestCaseFinder::run(const MatchFinder::MatchResult &Result) {
     if (current_test_suite_ && test_case_node->getName() == current_test_suite_->getName()) {
       return;
     }
-    files_->add(get_source_file(Result) + ".gtest.cpp", model::TestSuite{test_case_node->getName()});
+    files_->add(GetSourceFileName(Result) + ".gtest.cpp", model::TestSuite{test_case_node->getName()});
     current_test_suite_ = files_->get(test_case_node->getName());
   } else if (test_method_node && !condition_op_node) {
     assert(current_test_suite_ != nullptr);
     current_test_suite_->addTestCase(model::TestCase{test_method_node->getName()});
   } else if (condition_op_node) {
     assert(current_test_suite_ != nullptr);
-    current_test_suite_->getTestCase()->addAssertion(model::Assertion{get_condition_code(condition_op_node, *Result.SourceManager)});
+    current_test_suite_->getTestCase()->addAssertion(model::Assertion{extractConditionCode(condition_op_node, *Result.SourceManager)});
   }
 }
 
