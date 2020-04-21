@@ -27,7 +27,7 @@ std::string get_source_file(const MatchFinder::MatchResult &Result) {
 }
 
 
-void TestCaseFinder::addMatchers(clang::ast_matchers::MatchFinder& finder, tool::TestApplication* files) {
+void TestCaseFinder::addMatchers(clang::ast_matchers::MatchFinder& finder, model::ITestApplication* files) {
   assert(files != nullptr);
   assert(files_ == nullptr);
   files_ = files;
