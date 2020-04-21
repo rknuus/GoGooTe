@@ -1,6 +1,6 @@
 #include <clang/Tooling/CommonOptionsParser.h>
 #include <clang/Tooling/Tooling.h>
-#include "gogoote/Tool.h"
+#include "gogoote/tool/Tool.h"
 
 
 using namespace clang::tooling;
@@ -16,12 +16,11 @@ static cl::OptionCategory GoGooTeCategory("GoGooTe options");
 // It's nice to have this help message in all tools.
 static cl::extrahelp CommonHelp(CommonOptionsParser::HelpMessage);
 
-// A help message for this specific tool can be added afterwards.
-static cl::extrahelp MoreHelp("\n%%TODO(KNR)%%...\n");
+// static cl::extrahelp MoreHelp("\n%%TODO(KNR)%%...\n");
 
 
 int main(int argc, const char **argv) {
   CommonOptionsParser option_parser(argc, argv, GoGooTeCategory);
   ClangTool tool(option_parser.getCompilations(), option_parser.getSourcePathList());
-  return tool.run(newFrontendActionFactory<gogoote::Tool>().get());
+  return tool.run(newFrontendActionFactory<gogoote::tool::Tool>().get());
 }

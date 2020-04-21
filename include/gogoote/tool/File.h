@@ -4,6 +4,7 @@
 #include <string>
 
 namespace gogoote {
+namespace tool {
 
 class File
 {
@@ -15,4 +16,5 @@ private:
   std::ofstream file_;
 };
 
+}  // namespace tool
 }  // namespace gogoote

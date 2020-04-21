@@ -6,6 +6,7 @@
 #include "gogoote/model/TestSuite.h"
 
 namespace gogoote {
+namespace tool {
 
 class Files {
 public:
@@ -17,4 +18,5 @@ private:
   std::vector<std::pair<std::string, model::TestSuite>> items_;
 };
 
+}  // namespace tool
 }  // namespace gogoote

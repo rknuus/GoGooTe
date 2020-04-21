@@ -6,10 +6,11 @@
 #include <clang/Frontend/FrontendAction.h>
 #include <llvm/ADT/StringRef.h>
 #include "gogoote/cppunit/TestCaseFinder.h"
-#include "gogoote/Files.h"
+#include "gogoote/tool/Files.h"
 
 
 namespace gogoote {
+namespace tool {
 
 class Tool : public clang::ASTFrontendAction {
 public:
@@ -23,4 +24,5 @@ private:
   cppunit::TestCaseFinder test_case_finder_;
 };
 
+}  // namespace tool
 }  // namespace gogoote

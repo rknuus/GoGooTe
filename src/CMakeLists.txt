@@ -3,9 +3,9 @@ set (SOURCES
   model/Assertion.cpp
   model/TestCase.cpp
   model/TestSuite.cpp
-  File.cpp
-  Files.cpp
-  Tool.cpp
+  tool/File.cpp
+  tool/Files.cpp
+  tool/Tool.cpp
 )
 
 if ("LLVM" IN_LIST LLVM_AVAILABLE_LIBS)
@@ -20,7 +20,7 @@ endif()
 
 add_gogoote_executable(
   NAME gogoote
-  MAIN ${CMAKE_CURRENT_LIST_DIR}/main.cpp
+  MAIN main.cpp
   SOURCES ${SOURCES}
   LINK_WITH
     clangTooling

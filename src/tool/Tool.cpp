@@ -1,6 +1,7 @@
-#include "gogoote/Tool.h"
+#include "gogoote/tool/Tool.h"
 
 namespace gogoote {
+namespace tool {
 
 std::unique_ptr<clang::ASTConsumer> Tool::CreateASTConsumer(clang::CompilerInstance &CI,
                                                             llvm::StringRef file) {
@@ -14,4 +15,5 @@ void Tool::ExecuteAction() {
   files_.generate();
 }
 
+}  // namespace tool
 }  // namespace gogoote
