@@ -12,7 +12,7 @@ void TestSuite::addTestCase(const TestCase& test_case) {
   test_case_ = test_case;
 }
 
-std::string TestSuite::get_name() const {
+std::string TestSuite::getName() const {
   return name_;
 }
 

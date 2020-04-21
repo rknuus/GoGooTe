@@ -27,7 +27,7 @@ public:
 
   void addTestCase(const TestCase& test_case);
 
-  std::string get_name() const;
+  std::string getName() const;
   TestCase *const get_test_case();
 
 private:

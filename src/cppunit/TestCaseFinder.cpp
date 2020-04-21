@@ -90,7 +90,7 @@ void TestCaseFinder::run(const MatchFinder::MatchResult &Result) {
 
   if (test_case_node && !test_method_node) {
     // TODO(KNR): this is borked, look up builder pattern in loud-mouth's book
-    if (current_test_suite_ && test_case_node->getName() == current_test_suite_->get_name()) {
+    if (current_test_suite_ && test_case_node->getName() == current_test_suite_->getName()) {
       return;
     }
     files_->add(get_source_file(Result) + ".gtest.cpp", model::TestSuite{test_case_node->getName()});

@@ -13,7 +13,7 @@ void TestApplication::add(const std::string& filename, const model::TestSuite& i
 
 model::TestSuite * const TestApplication::get(const std::string& name) {
   const auto match_name = [name](const std::pair<std::string, model::TestSuite>& item) {
-    return item.second.get_name() == name;
+    return item.second.getName() == name;
   };
   auto item = std::find_if(std::begin(items_), std::end(items_), match_name);
   if (item == std::end(items_)) {
