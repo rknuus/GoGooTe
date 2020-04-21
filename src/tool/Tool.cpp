@@ -5,7 +5,7 @@ namespace tool {
 
 std::unique_ptr<clang::ASTConsumer> Tool::CreateASTConsumer(clang::CompilerInstance &CI,
                                                             llvm::StringRef file) {
-  test_case_finder_.sign_up(finder_, &files_);
+  test_case_finder_.addMatchers(finder_, &files_);
 
   return finder_.newASTConsumer();
 }

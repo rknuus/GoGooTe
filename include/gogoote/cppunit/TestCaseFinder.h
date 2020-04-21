@@ -16,7 +16,7 @@ class TestCaseFinder : public clang::ast_matchers::MatchFinder::MatchCallback
 {
 public:
   // TODO(KNR): cppunit should not access tool namespace, factor out an interface
-  void sign_up(clang::ast_matchers::MatchFinder& finder, tool::Files* files);  // TODO(KNR): factor out interface
+  void addMatchers(clang::ast_matchers::MatchFinder& finder, tool::Files* files);  // TODO(KNR): factor out interface
   void run(const clang::ast_matchers::MatchFinder::MatchResult &Result) override;
 
 private:
