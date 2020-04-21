@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <string>
 #include <utility>
-#include "gogoote/tool/File.h"
+#include "gogoote/tool/FileWriter.h"
 
 namespace gogoote {
 namespace tool {
@@ -24,7 +24,7 @@ model::TestSuite * const Files::get(const std::string& name) {
 
 void Files::generate() const {
   const auto gen = [](const std::pair<std::string, model::TestSuite>& p) {
-    File f{p.first}; f.append(model::to_string(p.second));
+    FileWriter f{p.first}; f.append(model::to_string(p.second));
   };
   std::for_each(std::cbegin(items_), std::cend(items_), gen);
 }

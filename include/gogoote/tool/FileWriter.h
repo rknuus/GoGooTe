@@ -6,10 +6,10 @@
 namespace gogoote {
 namespace tool {
 
-class File
+class FileWriter
 {
 public:
-  explicit File(const std::string& path);
+  explicit FileWriter(const std::string& path);
   void append(const std::string& content);
 
 private:

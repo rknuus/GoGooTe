@@ -3,7 +3,7 @@ set (SOURCES
   model/Assertion.cpp
   model/TestCase.cpp
   model/TestSuite.cpp
-  tool/File.cpp
+  tool/FileWriter.cpp
   tool/Files.cpp
   tool/Tool.cpp
 )
