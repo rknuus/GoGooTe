@@ -25,7 +25,7 @@ public:
   explicit TestSuite(const std::string& name);
   // TODO(KNR): rule of six
 
-  void add_test_case(const TestCase& test_case);
+  void addTestCase(const TestCase& test_case);
 
   // TODO(KNR): borked
   bool is_called(const std::string& name) const;

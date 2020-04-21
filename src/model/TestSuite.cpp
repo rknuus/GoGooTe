@@ -7,7 +7,7 @@ namespace model {
 
 TestSuite::TestSuite(const std::string& name) : name_(name) {}
 
-void TestSuite::add_test_case(const TestCase& test_case) {
+void TestSuite::addTestCase(const TestCase& test_case) {
   // test_cases_.push_back(test_case);
   test_case_ = test_case;
 }

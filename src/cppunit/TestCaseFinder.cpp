@@ -97,7 +97,7 @@ void TestCaseFinder::run(const MatchFinder::MatchResult &Result) {
     current_test_suite_ = files_->get(test_case_node->getName());
   } else if (test_method_node && !condition_op_node) {
     assert(current_test_suite_ != nullptr);
-    current_test_suite_->add_test_case(model::TestCase{test_method_node->getName()});
+    current_test_suite_->addTestCase(model::TestCase{test_method_node->getName()});
   } else if (condition_op_node) {
     assert(current_test_suite_ != nullptr);
     current_test_suite_->get_test_case()->addAssertion(model::Assertion{get_condition_code(condition_op_node, *Result.SourceManager)});
