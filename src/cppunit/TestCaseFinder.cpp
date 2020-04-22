@@ -17,7 +17,7 @@ using namespace clang::ast_matchers;
 namespace gogoote {
 namespace cppunit {
 
-std::string GetSourceFileName(const MatchFinder::MatchResult &Result) {
+std::string getSourceFileName(const MatchFinder::MatchResult &Result) {
   auto sm{Result.SourceManager};
   assert(sm != nullptr);
   auto file_id = sm->getMainFileID();
@@ -26,24 +26,7 @@ std::string GetSourceFileName(const MatchFinder::MatchResult &Result) {
   return file_entry->getName().str();
 }
 
-
-void TestCaseFinder::addMatchers(clang::ast_matchers::MatchFinder& finder, model::ITestApplication* files) {
-  assert(files != nullptr);
-  assert(files_ == nullptr);
-  files_ = files;
-
-  const auto test_case = cxxRecordDecl(isDerivedFrom(hasName("TestCase")), isExpansionInMainFile(), hasDefinition())
-                           .bind("TestCase");
-  finder.addMatcher(test_case, this);
-
-  const auto test_method = cxxMethodDecl(ofClass(test_case)).bind("TestMethod");
-  finder.addMatcher(test_method, this);
-
-  const auto assertion_method = cxxMethodDecl(ofClass(cxxRecordDecl(hasName("Asserter"))), hasName("failIf"));
-  const auto assertion_call = callExpr(callee(assertion_method), hasArgument(0, unaryOperator().bind("Condition")));
-  finder.addMatcher(assertion_call, this);
-}
-
+// shamelessly copied from clangmetatool (file include/clangmetatool/source_util.h)
 clang::CharSourceRange expandRange(const clang::SourceRange &range, const clang::SourceManager &sourceManager) {
   // Get the start location, resolving from macro definition to macro call
   // location. Special handling is needed for a statement in a macro body, we
@@ -83,17 +66,32 @@ std::string extractConditionCode(const UnaryOperator* condition_op_node, SourceM
   return std::regex_replace(text, cppunit_assertion, "$1");
 }
 
+
+void TestCaseFinder::addMatchers(clang::ast_matchers::MatchFinder& finder, model::ITestApplication* files) {
+  assert(files != nullptr);
+  assert(files_ == nullptr);
+  files_ = files;
+
+  const auto test_case = cxxRecordDecl(isDerivedFrom(hasName("TestCase")), isExpansionInMainFile(), hasDefinition())
+                           .bind("TestCase");
+  finder.addMatcher(test_case, this);
+
+  const auto test_method = cxxMethodDecl(ofClass(test_case)).bind("TestMethod");
+  finder.addMatcher(test_method, this);
+
+  const auto assertion_method = cxxMethodDecl(ofClass(cxxRecordDecl(hasName("Asserter"))), hasName("failIf"));
+  const auto assertion_call = callExpr(callee(assertion_method), hasArgument(0, unaryOperator().bind("Condition")));
+  finder.addMatcher(assertion_call, this);
+}
+
 void TestCaseFinder::run(const MatchFinder::MatchResult &Result) {
   const CXXRecordDecl *test_case_node = Result.Nodes.getNodeAs<CXXRecordDecl>("TestCase");
   const CXXMethodDecl *test_method_node = Result.Nodes.getNodeAs<CXXMethodDecl>("TestMethod");
   const UnaryOperator *condition_op_node = Result.Nodes.getNodeAs<UnaryOperator>("Condition");
 
   if (test_case_node && !test_method_node) {
-    // TODO(KNR): this is borked, look up builder pattern in loud-mouth's book
-    if (current_test_suite_ && test_case_node->getName() == current_test_suite_->getName()) {
-      return;
-    }
-    files_->add(GetSourceFileName(Result) + ".gtest.cpp", model::TestSuite{test_case_node->getName()});
+    files_->add(getSourceFileName(Result) + ".gtest.cpp", model::TestSuite{test_case_node->getName()});
+    // this is a form of context variable as described in Martin Fowler's book "Domain Specific Languages"
     current_test_suite_ = files_->get(test_case_node->getName());
   } else if (test_method_node && !condition_op_node) {
     assert(current_test_suite_ != nullptr);
