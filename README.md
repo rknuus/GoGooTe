@@ -57,4 +57,17 @@ Additional ideas, which might never make it into the tool:
 - support older versions of GoogleTest
 - support building GoGooTe with older versions of libclang/LLVM
 
+Some ideas for experiments are:
+- try various patterns described in Martin Fowler's book "Domain Specific Languages" to populate the model, e.g.:
+  - symbol table to collect all CppUnit items and look them up (e.g. using USR as key)
+  - pure form of context variables
+  - construction builder to first collect all data before creating an immutable element from those data
+  - parser combinator: not sure
+  - tree construction
+  - embedded translation: not sure
+  - state machine should work, but might be a bit over the top
+- try a few patterns described in Martin Fowler's book "Domain Specific Languages" to generate output:
+  - transformer generation
+  - model aware generation
+
 Contributions are highly appreciated!
