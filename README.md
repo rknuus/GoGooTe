@@ -59,7 +59,7 @@ Additional ideas, which might never make it into the tool:
 
 Some ideas for experiments are:
 - try various patterns described in Martin Fowler's book "Domain Specific Languages" to populate the model, e.g.:
-  - symbol table to collect all CppUnit items and look them up (e.g. using USR as key)
+  - symbol table to collect all CppUnit items and look them up (e.g. using [USR](https://clang.llvm.org/doxygen/namespaceclang_1_1tooling.html#acc71a6724bbf04a534dcfc000aee3c43) as key)
   - pure form of context variables
   - construction builder to first collect all data before creating an immutable element from those data
   - parser combinator: not sure
