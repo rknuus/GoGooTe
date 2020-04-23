@@ -9,10 +9,11 @@ namespace model {
 
 class Assertion {
 public:
-  explicit Assertion(const std::string& condition);
+  explicit Assertion(const std::string& assertion);
   // TODO(KNR): rule of six
 
 private:
+  std::string assertion_;
   std::string condition_;
 
   friend std::ostream& operator<<(std::ostream& os, const Assertion& value);

@@ -5,7 +5,6 @@
 #include <clang/Basic/SourceManager.h>
 #include <clang/Lex/Lexer.h>
 #include <memory>
-#include <regex>
 #include <string>
 #include "gogoote/model/TestSuite.h"
 
@@ -26,7 +25,7 @@ std::string getSourceFileName(const MatchFinder::MatchResult &Result) {
   return file_entry->getName().str();
 }
 
-// shamelessly copied from clangmetatool (file include/clangmetatool/source_util.h)
+// shamelessly copied from clangmetatool (file src/source_util.cpp)
 clang::CharSourceRange expandRange(const clang::SourceRange &range, const clang::SourceManager &sourceManager) {
   // Get the start location, resolving from macro definition to macro call
   // location. Special handling is needed for a statement in a macro body, we
@@ -55,15 +54,12 @@ clang::CharSourceRange expandRange(const clang::SourceRange &range, const clang:
   return clang::CharSourceRange::getCharRange(begin, end);
 }
 
-std::string extractConditionCode(const UnaryOperator* condition_op_node, SourceManager &sm) {
+std::string extractConditionText(const UnaryOperator* condition_op_node, SourceManager &sm) {
   assert(condition_op_node != nullptr);
 
   const auto range = expandRange(condition_op_node->getSourceRange(), sm);
   const auto text = clang::Lexer::getSourceText(range, sm, clang::LangOptions()).str();
-  std::regex cppunit_assertion{"^CPPUNIT_ASSERT\\s*[(](.*)[)]$"};
-
-  // return text;
-  return std::regex_replace(text, cppunit_assertion, "$1");
+  return text;
 }
 
 
@@ -98,7 +94,7 @@ void TestCaseFinder::run(const MatchFinder::MatchResult &Result) {
     current_test_suite_->addTestCase(model::TestCase{test_method_node->getName()});
   } else if (condition_op_node) {
     assert(current_test_suite_ != nullptr);
-    current_test_suite_->getTestCase()->addAssertion(model::Assertion{extractConditionCode(condition_op_node, *Result.SourceManager)});
+    current_test_suite_->getTestCase()->addAssertion(model::Assertion{extractConditionText(condition_op_node, *Result.SourceManager)});
   }
 }
 
