@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.14.0)
 
 set(GOGOOTE_UNIT_TEST_SOURCES
+  AssertionTest.cpp
   TestSuiteTest.cpp
 )
 

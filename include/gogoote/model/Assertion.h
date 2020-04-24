@@ -14,7 +14,8 @@ public:
 
 private:
   std::string assertion_;
-  std::string condition_;
+  std::string parameters_;
+  std::string message_;
 
   friend std::ostream& operator<<(std::ostream& os, const Assertion& value);
 };
