@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include "gogoote/model/TestSuite.h"
 
@@ -8,9 +9,16 @@ namespace model {
 
 class ITestApplication {
 public:
-  virtual ~ITestApplication() = default;  // TODO(KNR): rule of six
-  virtual void add(const std::string& filename, const model::TestSuite& item) = 0;
-  virtual model::TestSuite * const get(const std::string& filename) = 0;
+  virtual ~ITestApplication() = default;
+  ITestApplication(const ITestApplication&) = default;
+  ITestApplication& operator=(const ITestApplication&) = default;
+  ITestApplication(ITestApplication&&) = default;
+  ITestApplication& operator=(ITestApplication&&) = default;
+
+  virtual void add(const std::string& filename, std::unique_ptr<model::TestSuite> item) = 0;
+
+protected:
+  ITestApplication() = default;
 };
 
 }  // namespace model

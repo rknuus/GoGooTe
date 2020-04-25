@@ -13,7 +13,13 @@ namespace model {
 class TestFixture : public TestSuite {
 public:
   explicit TestFixture(const std::string& name);
-  // TODO(KNR): rule of six
+  virtual ~TestFixture() = default;
+  TestFixture(const TestFixture&) = default;
+  TestFixture& operator=(const TestFixture&) = default;
+  TestFixture(TestFixture&&) = default;
+  TestFixture& operator=(TestFixture&&) = default;
+
+  std::string toString() const override;
 };
 
 std::ostream& operator<<(std::ostream& os, const TestFixture& value);

@@ -7,6 +7,12 @@ namespace model {
 
 TestFixture::TestFixture(const std::string& name) : TestSuite(name) {}
 
+std::string TestFixture::toString() const {
+  std::ostringstream ss;
+  ss << *this;
+  return ss.str();
+}
+
 
 std::ostream& operator<<(std::ostream& os, const TestFixture& value) {
   os << "#include <gtest/gtest.h>\n\n";

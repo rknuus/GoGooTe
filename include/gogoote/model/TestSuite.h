@@ -23,12 +23,18 @@ namespace model {
 class TestSuite {
 public:
   explicit TestSuite(const std::string& name);
-  // TODO(KNR): rule of six
+  virtual ~TestSuite() = default;
+  TestSuite(const TestSuite&) = default;
+  TestSuite& operator=(const TestSuite&) = default;
+  TestSuite(TestSuite&&) = default;
+  TestSuite& operator=(TestSuite&&) = default;
 
   void addTestCase(const TestCase& test_case);
 
   std::string getName() const;
   TestCase *const getTestCase();
+
+  virtual std::string toString() const;
 
 private:
   std::string name_;

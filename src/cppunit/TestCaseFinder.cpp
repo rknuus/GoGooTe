@@ -96,12 +96,14 @@ void TestCaseFinder::run(const MatchFinder::MatchResult &Result) {
   const UnaryOperator *condition_op_node = Result.Nodes.getNodeAs<UnaryOperator>("Condition");
 
   if (test_fixture_node && !test_method_node) {
-    files_->add(getSourceFileName(Result) + ".gtest.cpp", model::TestFixture{test_fixture_node->getName()});
+    std::unique_ptr<model::TestSuite> suite{new model::TestFixture(test_fixture_node->getName())};
     // this is a form of context variable as described in Martin Fowler's book "Domain Specific Languages"
-    current_test_suite_ = files_->get(test_fixture_node->getName());
+    current_test_suite_ = suite.get();
+    files_->add(getSourceFileName(Result) + ".gtest.cpp", std::move(suite));
   } else if (test_case_node && !test_method_node) {
-    files_->add(getSourceFileName(Result) + ".gtest.cpp", model::TestSuite{test_case_node->getName()});
-    current_test_suite_ = files_->get(test_case_node->getName());
+    std::unique_ptr<model::TestSuite> suite{new model::TestSuite(test_case_node->getName())};
+    current_test_suite_ = suite.get();
+    files_->add(getSourceFileName(Result) + ".gtest.cpp", std::move(suite));
   } else if (test_method_node && !condition_op_node) {
     assert(current_test_suite_ != nullptr);
     current_test_suite_->addTestCase(model::TestCase{test_method_node->getName()});

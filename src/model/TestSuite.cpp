@@ -20,6 +20,12 @@ TestCase *const TestSuite::getTestCase() {
   return &test_case_;
 }
 
+std::string TestSuite::toString() const {
+  std::ostringstream ss;
+  ss << *this;
+  return ss.str();
+}
+
 
 std::ostream& operator<<(std::ostream& os, const TestSuite& value) {
   os << "#include <gtest/gtest.h>\n\n";
