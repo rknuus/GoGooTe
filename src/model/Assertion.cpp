@@ -9,6 +9,8 @@ namespace gogoote {
 namespace model {
 
 
+// TODO(KNR): prevent CPPUNIT_FAIL_HAHA from matching, consider to generate regex from
+// assertion_lookup_table keys
 const std::regex cppunit_assertion_pattern{"^(CPPUNIT_(ASSERT|FAIL)\\w*)\\s*[(](.*)[)]$"};
 const std::regex message_pattern{"_MESSAGE$"};
 const char* ws = " \t\n\r\f\v";
