@@ -20,6 +20,5 @@ class TestCase {};
 
 class ComplexNumberTest : public CppUnit::TestCase {
 public:
-  void runTest() {
-  }
+  void runTest() {}
 };

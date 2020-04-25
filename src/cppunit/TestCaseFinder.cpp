@@ -64,6 +64,9 @@ std::string extractConditionText(const UnaryOperator* condition_op_node, SourceM
 }
 
 
+// TODO(KNR): either rename class to include matching *all* interesting CppUnit elements or
+// split into multiple classes. The challenge of the latter approach is how to make sure that
+// assertions of a TestFixture don't accidentally end up in a TestCase and vice versa.
 void TestCaseFinder::addMatchers(clang::ast_matchers::MatchFinder& finder, model::ITestApplication* files) {
   assert(files != nullptr);
   assert(files_ == nullptr);
@@ -98,7 +101,6 @@ void TestCaseFinder::run(const MatchFinder::MatchResult &Result) {
     current_test_suite_ = files_->get(test_fixture_node->getName());
   } else if (test_case_node && !test_method_node) {
     files_->add(getSourceFileName(Result) + ".gtest.cpp", model::TestSuite{test_case_node->getName()});
-    // this is a form of context variable as described in Martin Fowler's book "Domain Specific Languages"
     current_test_suite_ = files_->get(test_case_node->getName());
   } else if (test_method_node && !condition_op_node) {
     assert(current_test_suite_ != nullptr);
@@ -108,6 +110,10 @@ void TestCaseFinder::run(const MatchFinder::MatchResult &Result) {
     current_test_suite_->getTestCase()->addAssertion(model::Assertion{extractConditionText(condition_op_node, *Result.SourceManager)});
   }
 }
+
+// Test List:
+// ----------
+// - integration test with test fixture header and source file
 
 }  // namespace cppunit
 }  // namespace gogoote
