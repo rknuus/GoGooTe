@@ -6,6 +6,7 @@
 #include <clang/Lex/Lexer.h>
 #include <memory>
 #include <string>
+#include "gogoote/model/TestFixture.h"
 #include "gogoote/model/TestSuite.h"
 
 
@@ -68,6 +69,11 @@ void TestCaseFinder::addMatchers(clang::ast_matchers::MatchFinder& finder, model
   assert(files_ == nullptr);
   files_ = files;
 
+  // TODO(KNR): prevent matching similar classes of other namespaces (accept namespaces global and CppUnit)
+  const auto test_fixture = cxxRecordDecl(isDerivedFrom(hasName("TestFixture")),
+                                          isExpansionInMainFile(), hasDefinition()).bind("TestFixture");
+  finder.addMatcher(test_fixture, this);
+
   const auto test_case = cxxRecordDecl(isDerivedFrom(hasName("TestCase")), isExpansionInMainFile(), hasDefinition())
                            .bind("TestCase");
   finder.addMatcher(test_case, this);
@@ -81,11 +87,16 @@ void TestCaseFinder::addMatchers(clang::ast_matchers::MatchFinder& finder, model
 }
 
 void TestCaseFinder::run(const MatchFinder::MatchResult &Result) {
+  const CXXRecordDecl *test_fixture_node = Result.Nodes.getNodeAs<CXXRecordDecl>("TestFixture");
   const CXXRecordDecl *test_case_node = Result.Nodes.getNodeAs<CXXRecordDecl>("TestCase");
   const CXXMethodDecl *test_method_node = Result.Nodes.getNodeAs<CXXMethodDecl>("TestMethod");
   const UnaryOperator *condition_op_node = Result.Nodes.getNodeAs<UnaryOperator>("Condition");
 
-  if (test_case_node && !test_method_node) {
+  if (test_fixture_node && !test_method_node) {
+    files_->add(getSourceFileName(Result) + ".gtest.cpp", model::TestFixture{test_fixture_node->getName()});
+    // this is a form of context variable as described in Martin Fowler's book "Domain Specific Languages"
+    current_test_suite_ = files_->get(test_fixture_node->getName());
+  } else if (test_case_node && !test_method_node) {
     files_->add(getSourceFileName(Result) + ".gtest.cpp", model::TestSuite{test_case_node->getName()});
     // this is a form of context variable as described in Martin Fowler's book "Domain Specific Languages"
     current_test_suite_ = files_->get(test_case_node->getName());

@@ -2,6 +2,7 @@ set (SOURCES
   cppunit/TestCaseFinder.cpp
   model/Assertion.cpp
   model/TestCase.cpp
+  model/TestFixture.cpp
   model/TestSuite.cpp
   tool/FileWriter.cpp
   tool/TestApplication.cpp
