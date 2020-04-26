@@ -1,0 +1,14 @@
+@startuml
+package "Test Model" {
+	TestTU *-- "*" TestSuite
+	TestTU *-- "*" HelperCodeBlocks
+	TestSuite *-- "0..1" SetupMethod
+	TestSuite *-- "0..1" TeardownMethod
+	TestSuite *-- "*" TestCase
+	TestSuite *-- "*" HelperCodeBlocks
+	SetupMethod *-- "*" Assertion
+	TeardownMethod *-- "*" Assertion
+	TestCase *-- "*" Assertion
+	HelperCodeBlocks *-- "*" Assertion
+}
+@enduml

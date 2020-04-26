@@ -1,0 +1,6 @@
+@startuml
+[Model Populator] *-- [CppUnit Parser]
+[Model Populator] o-- [Test Model]
+[Test Generator] o-- [Test Model]
+[Test Generator] *-- [GTest Generator]
+@enduml

@@ -1,0 +1,25 @@
+@startuml
+interface IPopulator {
+	+ addTestTU(string)
+	+ addTestSuite(string)
+	+ addSetupMethod(string)
+	+ addTeardownMethod(string)
+	+ addTestCase(string)
+	+ addHelperCode(string)
+	+ addAssertion(enum, string)
+}
+
+class ModelPopulator {
+	+ populate()
+}
+
+ModelPopulator -up-|> IPopulator
+
+interface IParser {
+	+ parse(IPopulator)
+}
+
+IParser --> IPopulator
+
+CppUnitParser -up-|> IParser
+@enduml

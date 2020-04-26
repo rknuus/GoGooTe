@@ -1,0 +1,35 @@
+digraph {
+	node [shape="box"];
+	root [label="convert CppUnit to GoogleTest"];
+	parse_cppunit [label="parse CppUnit tests"];
+	generate_gtest [label="generate GoogleTest tests"];
+	parse_testsuite [label="parse CppUnit testsuites"];
+	parse_testcase [label="parse CppUnit testcase"];
+	parse_testfixture [label="parse CppUnit testfixture"];
+	parse_testsuite_keep [label="parse code to keep"];
+	parse_test_method [label="parse CppUnit testmethods"];
+	parse_setup [label="parse testfixture setup"];
+	parse_teardown [label="parse testfixture teardown"];
+	parse_testfixture_keep [label="parse code to keep"];
+	parse_assertion [label="parse CppUnit assertions"];
+	parse_testmethod_keep [label="parse code to keep"];
+	root -> parse_cppunit;
+	root -> generate_gtest;
+	parse_cppunit -> parse_testsuite;
+	parse_testsuite -> parse_testcase;
+	parse_testsuite -> parse_testfixture;
+	parse_testsuite -> parse_testsuite_keep;
+	parse_testcase -> parse_test_method;
+	parse_testcase -> parse_testfixture_keep;
+	parse_testfixture -> parse_test_method;
+	parse_testfixture -> parse_testfixture_keep;
+	parse_testfixture -> parse_setup;
+	parse_testfixture -> parse_teardown;
+	parse_testsuite_keep -> parse_assertion;
+	parse_testfixture_keep -> parse_assertion;
+	parse_test_method -> parse_assertion;
+	parse_test_method -> parse_testmethod_keep;
+	parse_testmethod_keep -> parse_assertion;
+	parse_setup -> parse_assertion;
+	parse_teardown -> parse_assertion;
+}
