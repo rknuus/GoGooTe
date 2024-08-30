@@ -44,7 +44,7 @@ if (EXISTS ${PATH_TO_LLVM}/CMakeLists.txt)
   set (BUILD_AGAINST_PRECOMPILED_LLVM FALSE)
 endif()
 
-set(CMAKE_CXX_STANDARD 14)  # TODO(KNR): double-check compatibility with LLVM
+set(CMAKE_CXX_STANDARD 20)
 
 # This enables assertions for Release builds.
 # https://stackoverflow.com/questions/22140520/how-to-enable-assert-in-cmake-release-mode
@@ -133,7 +133,7 @@ endif()
 set(GOGOOTE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 # TODO(KNR): figure out compiler flags
-set (GOGOOTE_CXX_FLAGS "-std=c++14 -fPIC -fvisibility-inlines-hidden -fno-exceptions -Wunused -Werror")
+set (GOGOOTE_CXX_FLAGS "-fPIC -fvisibility-inlines-hidden -fno-exceptions -Wunused -Werror")
 if (NOT LLVM_ENABLE_RTTI)
   set(GOGOOTE_CXX_FLAGS "${GOGOOTE_CXX_FLAGS} -fno-rtti")
 endif()

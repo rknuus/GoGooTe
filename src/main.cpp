@@ -20,7 +20,8 @@ static cl::extrahelp CommonHelp(CommonOptionsParser::HelpMessage);
 
 
 int main(int argc, const char **argv) {
-  CommonOptionsParser option_parser(argc, argv, GoGooTeCategory);
-  ClangTool tool(option_parser.getCompilations(), option_parser.getSourcePathList());
+  Expected<CommonOptionsParser> option_parser = CommonOptionsParser::create(argc, argv, GoGooTeCategory);
+  // FIXME(RAKN): handle invalid option_parser
+  ClangTool tool(option_parser->getCompilations(), option_parser->getSourcePathList());
   return tool.run(newFrontendActionFactory<gogoote::tool::Tool>().get());
 }
