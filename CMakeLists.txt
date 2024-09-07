@@ -45,12 +45,11 @@ if (EXISTS ${PATH_TO_LLVM}/CMakeLists.txt)
 endif()
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_EXPORT_COMPILE_COMMANDS "ON")
 
 # This enables assertions for Release builds.
 # https://stackoverflow.com/questions/22140520/how-to-enable-assert-in-cmake-release-mode
 string(REPLACE "-DNDEBUG" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
-
-# option(GOGOOTE_BUILD_32_BITS "Enable 32 bits build" OFF)
 
 if (${BUILD_AGAINST_PRECOMPILED_LLVM})
   set (search_paths
@@ -111,25 +110,6 @@ else()
   set (GOGOOTE_CC ${clang_bin_directory}/clang)
 endif()
 
-# set (llvm_patch_version "${LLVM_VERSION_MAJOR}.${LLVM_VERSION_MINOR}.${LLVM_VERSION_PATCH}")
-# set (llvm_minor_version "${LLVM_VERSION_MAJOR}.${LLVM_VERSION_MINOR}.x")
-# set (llvm_major_version "${LLVM_VERSION_MAJOR}.x.x")
-
-# set (full_llvm_version ${llvm_patch_version})
-
-# if (EXISTS ${CMAKE_CURRENT_LIST_DIR}/LLVMCompatibility/${llvm_patch_version})
-#   set (LLVM_COMPATIBILITY_DIR ${llvm_patch_version})
-
-# elseif(EXISTS ${CMAKE_CURRENT_LIST_DIR}/LLVMCompatibility/${llvm_minor_version})
-#   set (LLVM_COMPATIBILITY_DIR ${llvm_minor_version})
-
-# elseif(EXISTS ${CMAKE_CURRENT_LIST_DIR}/LLVMCompatibility/${llvm_major_version})
-#   set (LLVM_COMPATIBILITY_DIR ${llvm_major_version})
-
-# else()
-#   message(FATAL_ERROR "LLVM-${full_llvm_version} is not supported")
-# endif()
-
 set(GOGOOTE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 # TODO(KNR): figure out compiler flags
@@ -137,14 +117,8 @@ set (GOGOOTE_CXX_FLAGS "-fPIC -fvisibility-inlines-hidden -fno-exceptions -Wunus
 if (NOT LLVM_ENABLE_RTTI)
   set(GOGOOTE_CXX_FLAGS "${GOGOOTE_CXX_FLAGS} -fno-rtti")
 endif()
-# if (GOGOOTE_BUILD_32_BITS)
-#   set(GOGOOTE_CXX_FLAGS "${GOGOOTE_CXX_FLAGS} -m32")
-# endif()
 
 set (GOGOOTE_LINK_FLAGS "-rdynamic")
-# if (GOGOOTE_BUILD_32_BITS)
-#   set(GOGOOTE_LINK_FLAGS "${GOGOOTE_LINK_FLAGS} -m32")
-# endif()
 
 
 set (GOGOOTE_DEFINITIONS ${LLVM_DEFINITIONS})
@@ -180,9 +154,20 @@ link_directories(/usr/local/lib)
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/functions.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/version.cmake)
 
+# FIXME(RAKN): this sucks
+set(BUILD_TESTING OFF CACHE BOOL "KLUDGE(RAKN): disable testing, because apparently it cannot cope with a FetchContent dependency on Googletest")
+include(FetchContent)
+FetchContent_Declare(
+  clangmetatool
+  GIT_REPOSITORY https://github.com/bloomberg/clangmetatool.git
+  GIT_TAG        0.21.7
+)
+FetchContent_MakeAvailable(clangmetatool)
+
 # add_subdirectory(LLVMCompatibility/${LLVM_COMPATIBILITY_DIR})
 add_subdirectory(src)
 
+# FIXME(RAKN): consider to support skipping tests
 include(CTest)
 enable_testing()
 add_subdirectory(test)

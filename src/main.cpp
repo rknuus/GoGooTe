@@ -1,5 +1,7 @@
 #include <clang/Tooling/CommonOptionsParser.h>
 #include <clang/Tooling/Tooling.h>
+#include <clangmetatool/meta_tool_factory.h>
+#include <clangmetatool/meta_tool.h>
 #include "gogoote/tool/Tool.h"
 
 
@@ -21,7 +23,11 @@ static cl::extrahelp CommonHelp(CommonOptionsParser::HelpMessage);
 
 int main(int argc, const char **argv) {
   Expected<CommonOptionsParser> option_parser = CommonOptionsParser::create(argc, argv, GoGooTeCategory);
-  // FIXME(RAKN): handle invalid option_parser
-  ClangTool tool(option_parser->getCompilations(), option_parser->getSourcePathList());
-  return tool.run(newFrontendActionFactory<gogoote::tool::Tool>().get());
+  assert(option_parser);  // FIXME(RAKN): tidy up
+  clang::tooling::RefactoringTool tool(option_parser->getCompilations(),
+                                       option_parser->getSourcePathList());
+  clangmetatool::MetaToolFactory< clangmetatool::MetaTool<gogoote::tool::Tool> >
+    raf(tool.getReplacements());
+  int r = tool.runAndSave(&raf);
+  return r;
 }

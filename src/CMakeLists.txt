@@ -23,8 +23,9 @@ add_gogoote_executable(
   MAIN main.cpp
   SOURCES ${SOURCES}
   LINK_WITH
+    clangmetatool
     clangTooling
-    clangBasic
-    clangASTMatchers
+    # clangBasic
+    # clangASTMatchers
     ${GOGOOTE_CXX_LLVM_LIBRARIES}
 )
