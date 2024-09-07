@@ -2,17 +2,18 @@
 
 #include <llvm/Support/raw_ostream.h>
 
-namespace gogoote {
+namespace {
 
 const char *gogooteVersionString() { return "@PROJECT_VERSION@"; }
 const char *gogooteCommitString() { return "@GIT_COMMIT@"; }
 const char *gogooteBuildDateString() { return "@BUILD_DATE@"; }
 const char *gogooteDescriptionString() { return "@PROJECT_DESCRIPTION@"; }
 const char *gogooteHomepageString() { return "@PROJECT_HOMEPAGE_URL@"; }
-
 const char *llvmVersionString() { return "@LLVM_VERSION@"; }
 
-void printVersionInformation() { printVersionInformationStream(llvm::errs()); }
+}  // namespace
+
+namespace gogoote {
 
 void printVersionInformationStream(llvm::raw_ostream &out) {
   out << "GoGooTe: " << gogooteDescriptionString() << "\n";

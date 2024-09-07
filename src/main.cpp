@@ -2,19 +2,22 @@
 #include <clang/Tooling/Tooling.h>
 #include <clangmetatool/meta_tool_factory.h>
 #include <clangmetatool/meta_tool.h>
+#include <llvm/Support/CommandLine.h>
+#include <llvm/Support/raw_ostream.h>
 #include "gogoote/tool/Tool.h"
+#include "gogoote/Version.h"
 
 
 using namespace clang::tooling;
 using namespace llvm;
 
 
-static cl::OptionCategory GoGooTeCategory("GoGooTe options");
-static cl::extrahelp CommonHelp(CommonOptionsParser::HelpMessage);
+static cl::OptionCategory gogoote_category("GoGooTe options");
 
 
 int main(int argc, const char **argv) {
-  Expected<CommonOptionsParser> option_parser = CommonOptionsParser::create(argc, argv, GoGooTeCategory);
+  cl::SetVersionPrinter(gogoote::printVersionInformationStream);
+  Expected<CommonOptionsParser> option_parser = CommonOptionsParser::create(argc, argv, gogoote_category);
   if (not option_parser) {
     handleAllErrors(option_parser.takeError(), [&](const llvm::ErrorInfoBase &error_info) {
         errs() << "Error: " << error_info.message() << "\n";
