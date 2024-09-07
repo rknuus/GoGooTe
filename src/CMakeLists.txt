@@ -25,7 +25,5 @@ add_gogoote_executable(
   LINK_WITH
     clangmetatool
     clangTooling
-    # clangBasic
-    # clangASTMatchers
     ${GOGOOTE_CXX_LLVM_LIBRARIES}
 )
