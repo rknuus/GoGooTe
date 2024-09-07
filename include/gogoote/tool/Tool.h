@@ -26,6 +26,8 @@
 #include <map>
 
 
+namespace {
+
 class TestFixtureCollector : public clang::ast_matchers::MatchFinder::MatchCallback {
 public:
   TestFixtureCollector(clang::ast_matchers::MatchFinder* finder) {
@@ -40,7 +42,14 @@ public:
   // Called when a match is found
   void run(const clang::ast_matchers::MatchFinder::MatchResult& result) override {
     if (const auto* decl = result.Nodes.getNodeAs<clang::CXXRecordDecl>("testFixture")) {
-      testFixtures.push_back(decl->getNameAsString());
+      // We want to exclude CppUnit framework classes driving from a text fixture. Using namespace
+      // CppUnit only works if CPPUNIT_NO_NAMESPACE is not set. That's why we check the file path
+      // instead.
+      // TODO(RAKN): check for the include directory from the compilation database to ensure false
+      // positives.
+      if (not locatedInPath(*decl, "/include/cppunit/", *result.SourceManager)) {
+        testFixtures.push_back(decl->getNameAsString());
+      }
     }
   }
 
@@ -49,12 +58,22 @@ public:
   }
 
 private:
+  template <typename TDecl>
+  bool locatedInPath(const TDecl &declaration, const std::string &partialPath, const clang::SourceManager &sourceManager) {
+    using namespace clang;
+    const SourceLocation loc = declaration.getLocation();
+    const PresumedLoc presumedLoc = sourceManager.getPresumedLoc(loc);
+    const std::string fileName = presumedLoc.getFilename();
+    return fileName.find(partialPath) != std::string::npos;
+  }
+
   std::vector<std::string> testFixtures;
 };
 
+}  // namespace
 
-namespace gogoote {
-namespace tool {
+
+namespace gogoote::tool {
 
 class Tool {
 public:
@@ -63,7 +82,6 @@ public:
 
   void postProcessing(std::map<std::string, clang::tooling::Replacements>&) {
     const auto& testFixtures = collector.getTestFixtures();
-    // FIXME(RAKN): limit finds to the file passed as argument
     for (const auto& fixture : testFixtures) {
       std::cout << "Found test fixture class: " << fixture << std::endl;
     }
@@ -71,17 +89,6 @@ public:
 
 private:
   TestFixtureCollector collector;
-
-// public:
-//   std::unique_ptr<clang::ASTConsumer> CreateASTConsumer(clang::CompilerInstance &CI,
-//                                                         llvm::StringRef file) override;
-//   void ExecuteAction() override;
-
-// private:
-//   TestApplication files_;
-//   // clang::ast_matchers::MatchFinder finder_;
-//   cppunit::TestCaseFinder test_case_finder_;
 };
 
-}  // namespace tool
-}  // namespace gogoote
+}  // namespace gogoote::tool
