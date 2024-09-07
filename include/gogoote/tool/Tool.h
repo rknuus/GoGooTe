@@ -6,7 +6,6 @@
 #include <clang/Frontend/CompilerInstance.h>
 #include <clang/Frontend/FrontendAction.h>
 #include <clang/Tooling/Refactoring.h>
-// #include <clangmetatool/collectors/references.h>
 #include <llvm/ADT/StringRef.h>
 #include "gogoote/cppunit/TestCaseFinder.h"
 #include "gogoote/tool/TestApplication.h"
@@ -18,10 +17,8 @@
 #include <vector>
 
 // tool
-// #include <clangmetatool/collectors/include_graph.h>
 #include <clang/ASTMatchers/ASTMatchers.h>
 #include <clang/ASTMatchers/ASTMatchFinder.h>
-// #include "TestFixtureCollector.h"
 #include <iostream>
 #include <map>
 
