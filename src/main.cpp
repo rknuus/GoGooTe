@@ -29,6 +29,6 @@ int main(int argc, const char **argv) {
   clang::tooling::RefactoringTool tool(option_parser->getCompilations(),
                                        option_parser->getSourcePathList());
   clangmetatool::MetaToolFactory< clangmetatool::MetaTool<gogoote::tool::Tool> >
-    raf(tool.getReplacements());
-  return tool.runAndSave(&raf);
+    factory(tool.getReplacements());
+  return tool.runAndSave(&factory);
 }
