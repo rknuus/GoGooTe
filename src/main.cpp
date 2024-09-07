@@ -9,25 +9,23 @@ using namespace clang::tooling;
 using namespace llvm;
 
 
-// Apply a custom category to all command-line options so that they are the
-// only ones displayed.
 static cl::OptionCategory GoGooTeCategory("GoGooTe options");
-
-// CommonOptionsParser declares HelpMessage with a description of the common
-// command-line options related to the compilation database and input files.
-// It's nice to have this help message in all tools.
 static cl::extrahelp CommonHelp(CommonOptionsParser::HelpMessage);
-
-// static cl::extrahelp MoreHelp("\n%%TODO(KNR)%%...\n");
 
 
 int main(int argc, const char **argv) {
   Expected<CommonOptionsParser> option_parser = CommonOptionsParser::create(argc, argv, GoGooTeCategory);
-  assert(option_parser);  // FIXME(RAKN): tidy up
+  if (not option_parser) {
+    handleAllErrors(option_parser.takeError(), [&](const llvm::ErrorInfoBase &error_info) {
+        errs() << "Error: " << error_info.message() << "\n";
+    });
+    cl::PrintHelpMessage();
+    return 1;
+  }
+
   clang::tooling::RefactoringTool tool(option_parser->getCompilations(),
                                        option_parser->getSourcePathList());
   clangmetatool::MetaToolFactory< clangmetatool::MetaTool<gogoote::tool::Tool> >
     raf(tool.getReplacements());
-  int r = tool.runAndSave(&raf);
-  return r;
+  return tool.runAndSave(&raf);
 }
