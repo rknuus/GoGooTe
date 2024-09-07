@@ -1,0 +1,7 @@
+[
+    {
+        "directory": "/Users/rkn/Personal/Projects/GoGooTe/test/data/simple-suite-with-all-assertions",
+        "command": "/opt/homebrew/opt/llvm/bin/clang-18 -std=c++17 -I/opt/homebrew/Cellar/cppunit/1.15.1/include -isystem /opt/homebrew/opt/llvm/include/c++/v1 -isystem /opt/homebrew/opt/llvm//lib/clang/18/include -arch arm64 -Wall -Werror -c simple-suite-with-all-assertions.cpp -o simple-suite-with-all-assertions.o",
+        "file": "/Users/rkn/Personal/Projects/GoGooTe/test/data/simple-suite-with-all-assertions/simple-suite-with-all-assertions.cpp"
+    }
+]
