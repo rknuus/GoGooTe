@@ -30,7 +30,7 @@ macro(add_gogoote_executable)  # TODO(KNR): try function
     )
   endforeach()
 
-  INSTALL(TARGETS ${local_NAME}
+  install(TARGETS ${local_NAME}
     RUNTIME DESTINATION bin
   )
 endmacro()
