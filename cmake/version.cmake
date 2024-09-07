@@ -1,3 +1,4 @@
+# FIXME(RAKN): move into a function
 execute_process(
   COMMAND git log -1 --format=%h
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
