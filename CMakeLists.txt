@@ -1,22 +1,24 @@
 cmake_minimum_required(VERSION 3.20.0)  # in sync with LLVM from 07-Sept-2024
 
-if (NOT GOGOOTE_VERSION)
-  set (GOGOOTE_VERSION 0.0.1)
+if(NOT GOGOOTE_VERSION)
+  set(GOGOOTE_VERSION 0.0.1)
 endif()
 
 project(GoGooTe
   LANGUAGES C CXX
 )
 
-set (PROJECT_VERSION ${GOGOOTE_VERSION})
-set (PROJECT_DESCRIPTION "CppUnit to GoogleTest converter")
-set (PROJECT_HOMEPAGE_URL "https://github.com/rknuus/GoGooTe")
+set(PROJECT_VERSION ${GOGOOTE_VERSION})
+set(PROJECT_DESCRIPTION "CppUnit to GoogleTest converter")
+set(PROJECT_HOMEPAGE_URL "https://github.com/rknuus/GoGooTe")
 
+set(SUPPORTED_LLVM_VERSION 18)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS "ON")
 
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/functions.cmake)
 
+# FIXME(RAKN): fetching the entire LLVM git repo just to use lit is ridiculous. Integrate lit into this project
 set (USAGE "
  If BUILD_TESTING is set PATH_TO_LIT pointing to the lit executable must be passed.
 
@@ -30,11 +32,9 @@ endif()
 
 # Originally we also supported the llvm-project root directory as PATH_TO_LLVM, but clangmetatool
 # can only cope with preinstalled LLVMs.
-# setup_llvm_cmake_search_paths(search_paths)
-find_llvm_cmake_dir(llvm_search_paths)
-find_package(LLVM REQUIRED CONFIG PATHS ${llvm_search_paths} NO_DEFAULT_PATH)
+find_llvm_cmake_directories(SUPPORTED_LLVM_VERSION llvm_search_paths clang_search_paths)
 # FIXME(RAKN): ensure LLVM is 18.x or newer
-find_clang_cmake_dir(clang_search_paths)
+find_package(LLVM REQUIRED CONFIG PATHS ${llvm_search_paths} NO_DEFAULT_PATH)
 find_package(Clang REQUIRED CONFIG PATHS ${clang_search_paths} NO_DEFAULT_PATH)
 setup_precompiled_llvm(GOGOOTE_CC)
 message(STATUS "Building against precompiled LLVM using compiler ${GOGOOTE_CC}")
