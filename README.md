@@ -1,12 +1,12 @@
 # GoGooTe
 CppUnit to GoogleTest converter.
 
-## Purpose
-Currently this project serves to explore technologies (e.g. libclang or later CI), techniques (e.g. large scale automated refactorings), and to have fun.
+## Preconditions
+On MacOS X (tested on Sonoma):
 
-Currently the tool supports only the most basic CppUnit elements presented in the [cookbook](http://cppunit.sourceforge.net/doc/cvs/cppunit_cookbook.html): a `TestCase` implementing test method `runTest` containing just `ASSERT_TRUE` statements (i.e. no non-assertion code).
-
-See section Outlook, below to learn what might come in the future.
+```
+brew install googletest llvm
+```
 
 ## Build GoGooTe
 ```

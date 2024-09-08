@@ -1,3 +1,4 @@
+# FIXME(RAKN): double check PATH_TO_LLVM since it got reworked
 set(CLANG_EXEC ${PATH_TO_LLVM}/bin/clang++)
 set(LIT_EXEC ${PATH_TO_LIT})
 # TODO(KNR): currently only supporting UNIX-like systems, because don't have access to

@@ -1,5 +1,4 @@
-cmake_minimum_required(VERSION 3.7.0)
-
+cmake_minimum_required(VERSION 3.20.0)  # in sync with LLVM from 07-Sept-2024
 
 if (NOT GOGOOTE_VERSION)
   set (GOGOOTE_VERSION 0.0.1)
@@ -8,107 +7,37 @@ endif()
 project(GoGooTe
   LANGUAGES C CXX
 )
-set (PROJECT_VERSION ${GOGOOTE_VERSION})
 
+set (PROJECT_VERSION ${GOGOOTE_VERSION})
 set (PROJECT_DESCRIPTION "CppUnit to GoogleTest converter")
 set (PROJECT_HOMEPAGE_URL "https://github.com/rknuus/GoGooTe")
-
-set (USAGE "
- cmake is supposed to be called with PATH_TO_LLVM pointing to
- a precompiled version of LLVM or to to the source code of LLVM
- and PATH_TO_LIT to the lit executable.
-
- Examples:
- cmake -G \"${CMAKE_GENERATOR}\" -DPATH_TO_LLVM=/opt/llvm-10.0.0 -DPATH_TO_LIT=~/llvm/utils/llvm-lit ${CMAKE_SOURCE_DIR}
- cmake -G \"${CMAKE_GENERATOR}\" -DPATH_TO_LLVM=/opt/llvm/source  -DPATH_TO_LIT=/opt/llvm/utils/llvm-lit ${CMAKE_SOURCE_DIR}
-")
-
-if (NOT PATH_TO_LLVM OR NOT PATH_TO_LIT)
-  message(FATAL_ERROR ${USAGE})
-endif()
-
-if (NOT IS_ABSOLUTE ${PATH_TO_LLVM})
-  # Convert relative path to absolute path
-  get_filename_component(PATH_TO_LLVM
-    "${PATH_TO_LLVM}" REALPATH BASE_DIR "${CMAKE_BINARY_DIR}")
-endif()
-
-if (NOT IS_ABSOLUTE ${PATH_TO_LIT})
-  # Convert relative path to absolute path
-  get_filename_component(PATH_TO_LIT
-    "${PATH_TO_LIT}" REALPATH BASE_DIR "${CMAKE_BINARY_DIR}")
-endif()
-
-set (BUILD_AGAINST_PRECOMPILED_LLVM TRUE)
-if (EXISTS ${PATH_TO_LLVM}/CMakeLists.txt)
-  set (BUILD_AGAINST_PRECOMPILED_LLVM FALSE)
-endif()
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS "ON")
 
-# This enables assertions for Release builds.
-# https://stackoverflow.com/questions/22140520/how-to-enable-assert-in-cmake-release-mode
-string(REPLACE "-DNDEBUG" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/functions.cmake)
 
-if (${BUILD_AGAINST_PRECOMPILED_LLVM})
-  set (search_paths
-    ${PATH_TO_LLVM}
-    ${PATH_TO_LLVM}/lib/cmake
-    ${PATH_TO_LLVM}/lib/cmake/llvm
-    ${PATH_TO_LLVM}/lib/cmake/clang
-    ${PATH_TO_LLVM}/share/clang/cmake/
-    ${PATH_TO_LLVM}/share/llvm/cmake/
-  )
+set (USAGE "
+ If BUILD_TESTING is set PATH_TO_LIT pointing to the lit executable must be passed.
 
-  find_package(LLVM REQUIRED CONFIG PATHS ${search_paths} NO_DEFAULT_PATH)
-  find_package(Clang REQUIRED CONFIG PATHS ${search_paths} NO_DEFAULT_PATH)
+ Examples:
+ cmake -G \"${CMAKE_GENERATOR}\" -DPATH_TO_LIT=~/llvm-project/llvm/utils/lit/lit ${CMAKE_SOURCE_DIR}
+")
 
-  if (TARGET clang)
-    get_target_property(GOGOOTE_CC clang LOCATION)
-  else()
-    set(GOGOOTE_CC ${PATH_TO_LLVM}/bin/clang)
-  endif()
-else()
-  macro(get_llvm_version_component input component)
-    string(REGEX MATCH "${component} ([0-9]+)" match ${input})
-    if (NOT match)
-      message(FATAL_ERROR "Cannot find LLVM version component '${component}'")
-    endif()
-    set (${component} ${CMAKE_MATCH_1})
-  endmacro()
-
-  file(READ ${PATH_TO_LLVM}/CMakeLists.txt LLVM_CMAKELISTS)
-  get_llvm_version_component("${LLVM_CMAKELISTS}" LLVM_VERSION_MAJOR)
-  get_llvm_version_component("${LLVM_CMAKELISTS}" LLVM_VERSION_MINOR)
-  get_llvm_version_component("${LLVM_CMAKELISTS}" LLVM_VERSION_PATCH)
-  set (LLVM_VERSION ${LLVM_VERSION_MAJOR}.${LLVM_VERSION_MINOR}.${LLVM_VERSION_PATCH})
-
-  # if (GOGOOTE_BUILD_32_BITS)
-  #   set (LLVM_BUILD_32_BITS ON CACHE BOOL "Forcing LLVM to be built for 32 bits as well" FORCE)
-  # endif()
-  set (LLVM_ENABLE_PROJECTS "clang" CACHE BOOL "Build only Clang when building against monorepo" FORCE)
-  set (LLVM_TARGETS_TO_BUILD "host" CACHE STRING "Do not build targets we cannot JIT" FORCE)
-
-  add_subdirectory(${PATH_TO_LLVM} llvm-build-dir)
-
-  if (NOT TARGET clangTooling)
-    message(FATAL_ERROR " 
- Cannot find clangTooling target. Did you forget to clone clang sources?
- Clean CMake cache and make sure they are available at:
- ${PATH_TO_LLVM}/tools/clang")
-  endif()
-
-  # Normally, include paths provided by LLVMConfig.cmake
-  # In this case we can 'steal' them from real targets
-  get_target_property(llvm_support_includes LLVMSupport INCLUDE_DIRECTORIES)
-  get_target_property(clang_tooling_includes clangTooling INCLUDE_DIRECTORIES)
-  set(LLVM_INCLUDE_DIRS ${llvm_support_includes} ${clang_tooling_includes})
-  list(REMOVE_DUPLICATES LLVM_INCLUDE_DIRS)
-
-  get_target_property(clang_bin_directory clang RUNTIME_OUTPUT_DIRECTORY)
-  set (GOGOOTE_CC ${clang_bin_directory}/clang)
+if(BUILD_TESTING AND NOT PATH_TO_LIT)
+  message(FATAL_ERROR ${USAGE})
 endif()
+
+# Originally we also supported the llvm-project root directory as PATH_TO_LLVM, but clangmetatool
+# can only cope with preinstalled LLVMs.
+# setup_llvm_cmake_search_paths(search_paths)
+find_llvm_cmake_dir(llvm_search_paths)
+find_package(LLVM REQUIRED CONFIG PATHS ${llvm_search_paths} NO_DEFAULT_PATH)
+# FIXME(RAKN): ensure LLVM is 18.x or newer
+find_clang_cmake_dir(clang_search_paths)
+find_package(Clang REQUIRED CONFIG PATHS ${clang_search_paths} NO_DEFAULT_PATH)
+setup_precompiled_llvm(GOGOOTE_CC)
+message(STATUS "Building against precompiled LLVM using compiler ${GOGOOTE_CC}")
 
 set(GOGOOTE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -120,16 +49,15 @@ endif()
 
 set (GOGOOTE_LINK_FLAGS "-rdynamic")
 
-
 set (GOGOOTE_DEFINITIONS ${LLVM_DEFINITIONS})
 set (THIRD_PARTY_INCLUDE_DIRS
   ${LLVM_INCLUDE_DIRS}
-  # ${CMAKE_SOURCE_DIR}/vendor
 )
 set (GOGOOTE_INCLUDE_DIRS
   ${GOGOOTE_SOURCE_DIR}/include
-  # ${CMAKE_CURRENT_LIST_DIR}/LLVMCompatibility/${LLVM_COMPATIBILITY_DIR}
 )
+# FIXME(RAKN): can only include version.cmake *after* GOGOOTE_INCLUDE_DIRS was defined
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/version.cmake)
 
 if ("LLVM" IN_LIST LLVM_AVAILABLE_LIBS)
   set (GOGOOTE_LLVM_COMPATIBILITY_LIBRARIES
@@ -151,11 +79,10 @@ link_directories(/usr/local/lib)
 # SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib" "${LLVM_LIB_PATH}")
 # SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/functions.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/version.cmake)
-
-# FIXME(RAKN): this sucks
-set(BUILD_TESTING OFF CACHE BOOL "KLUDGE(RAKN): disable testing, because apparently it cannot cope with a FetchContent dependency on Googletest")
+# FIXME(RAKN): print messages when downloading the repo
+# FIXME(RAKN): clangmetatool was probably not yet migrated to version 18 of LLVM and generates compiler warnings like:
+# build/_deps/clangmetatool-src/src/tool_application_support.cpp:121:41: warning: 'makeArrayRef<const char *>' is deprecated: Use deduction guide instead [-Wdeprecated-declarations]
+#          driver.BuildCompilation(llvm::makeArrayRef(argsArray)));
 include(FetchContent)
 FetchContent_Declare(
   clangmetatool
@@ -163,12 +90,41 @@ FetchContent_Declare(
   GIT_TAG        0.21.7
 )
 FetchContent_MakeAvailable(clangmetatool)
+# TODO(RAKN): fix upstream
+# FIXME(RAKN): patch CMakeLists.txt of clangmetatool/t/ to use the _CURRENT_ variant of CMAKE_SOURCE_DIR and CMAKE_BINARY_DIR
 
-# add_subdirectory(LLVMCompatibility/${LLVM_COMPATIBILITY_DIR})
-add_subdirectory(src)
+set (SOURCES
+  # src/cppunit/TestCaseFinder.cpp
+  # src/model/Assertion.cpp
+  # src/model/TestCase.cpp
+  # src/model/TestSuite.cpp
+  # src/tool/FileWriter.cpp
+  # src/tool/TestApplication.cpp
+  src/tool/Tool.cpp
+)
 
-# FIXME(RAKN): consider to support skipping tests
+if ("LLVM" IN_LIST LLVM_AVAILABLE_LIBS)
+  set (GOGOOTE_CXX_LLVM_LIBRARIES
+    LLVM
+  )
+else()
+  set (GOGOOTE_CXX_LLVM_LIBRARIES
+    LLVMObject
+  )
+endif()
+
+add_gogoote_executable(
+  NAME gogoote
+  MAIN src/main.cpp
+  SOURCES ${SOURCES}
+  LINK_WITH
+    clangmetatool
+    clangTooling
+    ${GOGOOTE_CXX_LLVM_LIBRARIES}
+)
+
 include(CTest)
-enable_testing()
-add_subdirectory(test)
-add_subdirectory(test-lit)
+if(BUILD_TESTING)
+  add_subdirectory(test)
+  add_subdirectory(test-lit)
+endif() 
