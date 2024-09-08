@@ -8,6 +8,12 @@ On MacOS X (tested on Sonoma):
 brew install googletest llvm
 ```
 
+If you want to run the GoGooTe tests:
+
+```
+brew install lit  # on non-MacOS systems: pip install lit
+```
+
 ## Build GoGooTe
 ```
 git clone https://github.com/rknuus/GoGooTe.git --recursive
