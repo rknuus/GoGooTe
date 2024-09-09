@@ -20,13 +20,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS "ON")
 
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/functions.cmake)
 
-if (APPLE)
-  find_brew_prefix(BREW_PREFIX)
-  if (NOT BREW_PREFIX STREQUAL "")
-    list(APPEND CMAKE_PREFIX_PATH "${BREW_PREFIX}/opt/llvm/lib/cmake")
-  endif()
-endif()
-
+add_homebrew_cmake_prefix_path()
 find_package(LLVM REQUIRED CONFIG)
 find_package(Clang REQUIRED CONFIG)
 if (NOT LLVM_VERSION_MAJOR GREATER ${SUPPORTED_LLVM_MAJOR_VERSION} AND
