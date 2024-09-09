@@ -70,8 +70,7 @@ else()
   )
 endif()
 
-# Needed by FreeBSD
-link_directories(/usr/local/lib)
+link_directories(/usr/local/lib)  # Needed by FreeBSD
 
 # # https://cmake.org/Wiki/CMake_RPATH_handling#Always_full_RPATH
 # SET(CMAKE_SKIP_BUILD_RPATH FALSE)
@@ -80,27 +79,22 @@ link_directories(/usr/local/lib)
 # SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # FIXME(RAKN): check whether clangmetatool supports Windows. If not: drop support in GoGooTe for Windows, because that's pointless.
-# FIXME(RAKN): print messages when downloading the repo
 # FIXME(RAKN): clangmetatool was probably not yet migrated to version 18 of LLVM and generates compiler warnings like:
 # build/_deps/clangmetatool-src/src/tool_application_support.cpp:121:41: warning: 'makeArrayRef<const char *>' is deprecated: Use deduction guide instead [-Wdeprecated-declarations]
 #          driver.BuildCompilation(llvm::makeArrayRef(argsArray)));
 include(FetchContent)
+set(FETCHCONTENT_QUIET FALSE)
 FetchContent_Declare(
   clangmetatool
   GIT_REPOSITORY https://github.com/bloomberg/clangmetatool.git
   GIT_TAG        0.21.7
 )
 FetchContent_MakeAvailable(clangmetatool)
+
 # TODO(RAKN): fix upstream
 # FIXME(RAKN): patch CMakeLists.txt of clangmetatool/t/ to use the _CURRENT_ variant of CMAKE_SOURCE_DIR and CMAKE_BINARY_DIR
 
 set (SOURCES
-  # src/cppunit/TestCaseFinder.cpp
-  # src/model/Assertion.cpp
-  # src/model/TestCase.cpp
-  # src/model/TestSuite.cpp
-  # src/tool/FileWriter.cpp
-  # src/tool/TestApplication.cpp
   src/tool/Tool.cpp
 )
 
