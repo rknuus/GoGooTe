@@ -14,6 +14,15 @@ If you want to run the GoGooTe tests:
 brew install lit  # on non-MacOS systems: pip install lit
 ```
 
+Alternatively you can specify custom paths to LLVM and lit:
+
+- `PATH_TO_LLVM`: Specify the path to a custom LLVM installation (default: system LLVM).
+- `PATH_TO_LIT`: Specify the path to the 'lit' executable (default: pip lit).
+
+```bash
+cmake -D PATH_TO_LLVM=/custom/llvm/path -D PATH_TO_LIT=/custom/lit/path ..
+```
+
 ## Build GoGooTe
 ```
 git clone https://github.com/rknuus/GoGooTe.git --recursive
