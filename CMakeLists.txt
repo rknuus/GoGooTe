@@ -52,8 +52,12 @@ set (THIRD_PARTY_INCLUDE_DIRS
 set (GOGOOTE_INCLUDE_DIRS
   ${GOGOOTE_SOURCE_DIR}/include
 )
-# FIXME(RAKN): can only include version.cmake *after* GOGOOTE_INCLUDE_DIRS was defined
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/version.cmake)
+configure_gogoote_version(
+  ${GOGOOTE_INCLUDE_DIRS}
+  ${THIRD_PARTY_INCLUDE_DIRS}
+  ${GOGOOTE_LINK_FLAGS}
+  ${GOGOOTE_CXX_FLAGS}
+)
 
 if ("LLVM" IN_LIST LLVM_AVAILABLE_LIBS)
   set (GOGOOTE_LLVM_COMPATIBILITY_LIBRARIES
@@ -75,6 +79,7 @@ link_directories(/usr/local/lib)
 # SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib" "${LLVM_LIB_PATH}")
 # SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
+# FIXME(RAKN): check whether clangmetatool supports Windows. If not: drop support in GoGooTe for Windows, because that's pointless.
 # FIXME(RAKN): print messages when downloading the repo
 # FIXME(RAKN): clangmetatool was probably not yet migrated to version 18 of LLVM and generates compiler warnings like:
 # build/_deps/clangmetatool-src/src/tool_application_support.cpp:121:41: warning: 'makeArrayRef<const char *>' is deprecated: Use deduction guide instead [-Wdeprecated-declarations]
