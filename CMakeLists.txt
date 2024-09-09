@@ -4,7 +4,6 @@ if(NOT GOGOOTE_VERSION)
   set(GOGOOTE_VERSION 0.0.1)
 endif()
 
-set(PATH_TO_LLVM "" CACHE PATH "Path to custom LLVM installation (optional).")
 set(PATH_TO_LIT "" CACHE PATH "Path to the 'lit' executable (optional).")
 
 project(GoGooTe
@@ -21,16 +20,25 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS "ON")
 
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/functions.cmake)
 
-# Originally we also supported the llvm-project root directory as PATH_TO_LLVM, but clangmetatool
-# can only cope with preinstalled LLVMs.
-find_llvm_cmake_directories(SUPPORTED_LLVM_MAJOR_VERSION llvm_search_paths clang_search_paths)
-find_package(LLVM REQUIRED CONFIG PATHS ${llvm_search_paths} NO_DEFAULT_PATH)
-find_package(Clang REQUIRED CONFIG PATHS ${clang_search_paths} NO_DEFAULT_PATH)
-# As LLVM and Clang are searched in the same directory, checking the version for LLVM is enough
+if (APPLE)
+  find_brew_prefix(BREW_PREFIX)
+  if (NOT BREW_PREFIX STREQUAL "")
+    list(APPEND CMAKE_PREFIX_PATH "${BREW_PREFIX}/opt/llvm/lib/cmake")
+  endif()
+endif()
+
+find_package(LLVM REQUIRED CONFIG)
+find_package(Clang REQUIRED CONFIG)
 if (NOT LLVM_VERSION_MAJOR GREATER ${SUPPORTED_LLVM_MAJOR_VERSION} AND
     NOT LLVM_VERSION_MAJOR EQUAL ${SUPPORTED_LLVM_MAJOR_VERSION})
   message(FATAL_ERROR "LLVM version must be at least ${SUPPORTED_LLVM_MAJOR_VERSION}.0.0. Found ${LLVM_VERSION_MAJOR}.${LLVM_VERSION_MINOR}.${LLVM_VERSION_PATCH}")
 endif()
+
+find_program(LIT_EXECUTABLE NAMES lit)
+if (NOT LIT_EXECUTABLE)
+  message(FATAL_ERROR "Could not find 'lit' program. Please install lit using 'brew' or 'pip', or provide the LIT_PATH manually.")
+endif()
+message(STATUS "Using lit program: ${LIT_EXECUTABLE}")
 
 setup_precompiled_llvm(GOGOOTE_CC)
 message(STATUS "Building against precompiled LLVM using compiler ${GOGOOTE_CC}")

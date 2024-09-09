@@ -14,23 +14,14 @@ If you want to run the GoGooTe tests:
 brew install lit  # on non-MacOS systems: pip install lit
 ```
 
-Alternatively you can specify custom paths to LLVM and lit:
-
-- `PATH_TO_LLVM`: Specify the path to a custom LLVM installation (default: system LLVM).
-- `PATH_TO_LIT`: Specify the path to the 'lit' executable (default: pip lit).
-
-```bash
-cmake -D PATH_TO_LLVM=/custom/llvm/path -D PATH_TO_LIT=/custom/lit/path ..
-```
+If LLVM is installed in a custom location you can specify the location as follows: `-DLLVM_DIR=/path/to/llvm/cmake/config`
 
 ## Build GoGooTe
 ```
-git clone https://github.com/rknuus/GoGooTe.git --recursive
+git clone https://github.com/rknuus/GoGooTe.git
 cd GoGooTe
-mkdir build.dir
-cd build.dir
-cmake -DPATH_TO_LLVM=path/to/llvm -DPATH_TO_LIT=path/to/llvm-lit ..
-make
+cmake -B build -S .
+cmake --build build
 ```
 
 ## Compatibility
@@ -38,11 +29,11 @@ Initially, GoGooTe will only support a single version of libclang/LLVM, CppUnit,
 
 GoGooTe can be built with the following libclang/LLVM version:
 
-| LLVM version  | supported       |
-| ------------- |:---------------:|
-| >10.x         | no (not tested) |
-| 10.x          | yes             |
-| <10.x         | no (not tested) |
+| LLVM version  | supported                |
+| ------------- |:------------------------:|
+| >18.x         | perhaps (not tested)     |
+| 18.x          | yes                      |
+| <18.x         | probably no (not tested) |
 
 GoGooTe can convert CppUnit versions to GoogleTest versions as follows:
 
